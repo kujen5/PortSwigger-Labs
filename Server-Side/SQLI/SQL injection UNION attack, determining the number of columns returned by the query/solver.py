@@ -14,6 +14,8 @@ def check_internal_server_error(text):
         return False
     else:
         return True
+    
+
 
 def main():
     host="https://0a45002c04ae41cb807a2ce500050032.web-security-academy.net"
