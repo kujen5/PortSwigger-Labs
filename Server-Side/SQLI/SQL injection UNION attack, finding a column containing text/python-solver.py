@@ -3,7 +3,6 @@ import urllib3
 import bs4
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-
 def check_internal_server_error(text):
     soup=bs4.BeautifulSoup(text,"html.parser")
     error_tag = soup.find('p', attrs={'class': 'is-warning'})
