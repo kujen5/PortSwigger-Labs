@@ -36,7 +36,7 @@ def string_fetched_final_request(text):
 
     
 def main():
-    host="https://0a32007103c9c02281bf1b86001b0086.web-security-academy.net"
+    host="https://0a8d001703ffc072801f3a3500980037.web-security-academy.net"
     client=requests.Session()
     client.verify=False
     product_url=f'{host}/filter?category='
