@@ -55,7 +55,7 @@ def ascii_subsequence_match(target, haystack):
     return False
 
 def main():
-    host = 'https://0a550051048d67d480af087800900036.web-security-academy.net'
+    host = 'https://0aeb002d03cacdcc8020084d000c0051.web-security-academy.net'
     endpoint = "/filter?category="
     client = requests.Session()
     client.verify = False
